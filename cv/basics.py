@@ -1,9 +1,11 @@
 import cv2.cv2 as cv
 
+from cv import base_dir, images
+
 if __name__ == '__main__':
 
     # Load and show
-    image = cv.imread("resources/images/apple.jpg")
+    image = cv.imread(f'{images}/apple.jpg')
     (h, w, d) = image.shape
     print("width={}, height={}, depth={}".format(w, h, d))
 
