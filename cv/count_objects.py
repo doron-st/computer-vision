@@ -34,14 +34,24 @@ def main(argv: List[str]):
     cv2.imshow("Thresh", thresh)
     cv2.waitKey(0)
 
+    adaptive_thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
+    cv2.imshow("Adaptive thresh", adaptive_thresh)
+    cv2.waitKey(0)
+
     # we apply erosion to reduce the size of foreground objects
-    mask = thresh.copy()
-    mask = cv2.erode(mask, None, iterations=5)
-    cv2.imshow("Eroded", mask)
+    eroded = thresh.copy()
+    eroded = cv2.erode(eroded, None, iterations=2)
+    cv2.imshow("Eroded", eroded)
+    cv2.waitKey(0)
+
+    # we apply dilution to reduce the size of background objects
+    dilated = eroded.copy()
+    dilated = cv2.dilate(dilated, None, iterations=2)
+    cv2.imshow("Dilated", dilated)
     cv2.waitKey(0)
 
     # find contours (i.e., outlines) of the foreground objects in the thresholded image
-    contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours = imutils.grab_contours(contours)
     output = image.copy()
 
