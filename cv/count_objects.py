@@ -55,7 +55,7 @@ def main(argv: List[str]):
 
     # draw the total number of contours found in purple
     text = "I found {} objects!".format(len(contours))
-    cv2.putText(output, text, (400, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (240, 0, 159), 2)
+    cv2.putText(output, text, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 240, 159), 2)
     cv2.imshow("Contours", output)
     cv2.waitKey(0)
 
