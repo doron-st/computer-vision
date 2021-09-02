@@ -15,7 +15,6 @@ if __name__ == '__main__':
     # load the image from disk
     image = cv.imread(args.image)
     image = cv.resize(image, (int(image.shape[1] / 2), int(image.shape[0] / 2)))
-
     hsv = cv.cvtColor(image, cv.COLOR_BGR2HSV)
 
     # define the list of boundaries
