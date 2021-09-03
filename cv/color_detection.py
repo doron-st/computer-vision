@@ -1,20 +1,13 @@
 # import the necessary packages
-import argparse
 import cv2.cv2 as cv
 import numpy as np
 
 # construct the argument parse and parse the arguments
-from cv import images
 from cv.utils.numpy_utils import safe_add, safe_subtract
+from cv.utils.parsing_utils import get_single_image_from_command_line
 
 if __name__ == '__main__':
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-i", "--image", help="path to the image file", default=f'{images}/lua_bao_bei.jpg')
-    args = ap.parse_args()
-
-    # load the image from disk
-    image = cv.imread(args.image)
-    image = cv.resize(image, (int(image.shape[1] / 2), int(image.shape[0] / 2)))
+    image = get_single_image_from_command_line()
     hsv = cv.cvtColor(image, cv.COLOR_BGR2HSV)
 
     # define the list of boundaries
@@ -27,7 +20,7 @@ if __name__ == '__main__':
 
     # transform from paint to openCV hue scale
     r = 179 / 239
-    colors = np.array([[int(a * b) for a, b in zip(color, [r, 1, 1])] for color in colors],  dtype="uint8")
+    colors = np.array([[int(a * b) for a, b in zip(color, [r, 1, 1])] for color in colors], dtype="uint8")
 
     d = np.array([22, 100, 150], dtype="uint8")
     max_values = np.array([179, 255, 255], dtype="uint8")

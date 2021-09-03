@@ -1,6 +1,6 @@
 import cv2.cv2 as cv
 
-from cv import base_dir, images
+from cv import images
 
 if __name__ == '__main__':
 
@@ -52,7 +52,6 @@ if __name__ == '__main__':
 
     # draw green text on the image
     output = image.copy()
-    cv.putText(output, "Apple!", (50, 100),
-                cv.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+    cv.putText(output, "Apple!", (50, 100), cv.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
     cv.imshow("Text", output)
     cv.waitKey(0)

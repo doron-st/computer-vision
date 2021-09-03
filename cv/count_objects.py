@@ -1,20 +1,14 @@
 # import the necessary packages
-from typing import List
-import sys
-import argparse
-import imutils
 import cv2.cv2 as cv2
+import imutils
+import sys
 
-from cv import images
+from cv.utils.parsing_utils import get_single_image_from_command_line
 
 
-def main(argv: List[str]):
+def main():
     # construct the argument parser and parse the arguments
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-i", "--image", help="path to input image", default=f'{images}/tetris.jpg')
-    args = ap.parse_args(argv[1:])
-
-    image = cv2.imread(args.image)
+    image = get_single_image_from_command_line()
     cv2.imshow("Image", image)
     cv2.waitKey(0)
 
@@ -71,4 +65,4 @@ def main(argv: List[str]):
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main()
