@@ -1,7 +1,7 @@
 import argparse
 import cv2.cv2 as cv
 
-from cv.utils.image_utils import scale
+from cvp.utils.image_utils import scale
 
 
 def get_single_image_parser():

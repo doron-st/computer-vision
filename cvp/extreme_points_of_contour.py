@@ -1,5 +1,6 @@
-from cv.utils.image_utils import show, get_contours, scale
-from cv.utils.parsing_utils import get_single_image_from_command_line
+from cvp.utils.image_utils import show
+from cvp.shape.countours import get_contours_from_thresh, get_extreme_points
+from cvp.utils.parsing_utils import get_single_image_from_command_line
 import cv2.cv2 as cv
 
 
@@ -12,14 +13,11 @@ def main():
     diluted = cv.dilate(eroded, None, iterations=2)
     show(diluted)
 
-    contours = get_contours(diluted)
+    contours = get_contours_from_thresh(diluted)
     max_contour = max(contours, key=cv.contourArea)
     cv.drawContours(image, [max_contour], -1, (255, 255, 255), 2)
 
-    ext_left = tuple(max_contour[max_contour[:, :, 0].argmin()][0])
-    ext_right = tuple(max_contour[max_contour[:, :, 0].argmax()][0])
-    ext_top = tuple(max_contour[max_contour[:, :, 1].argmin()][0])
-    ext_bot = tuple(max_contour[max_contour[:, :, 1].argmax()][0])
+    ext_bot, ext_left, ext_right, ext_top = get_extreme_points(max_contour)
 
     cv.circle(image, ext_left, 8, (255, 0, 0), -1)
     cv.circle(image, ext_right, 8, (0, 255, 0), -1)

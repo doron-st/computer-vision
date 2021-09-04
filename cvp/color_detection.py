@@ -3,8 +3,8 @@ import cv2.cv2 as cv
 import numpy as np
 
 # construct the argument parse and parse the arguments
-from cv.utils.numpy_utils import safe_add, safe_subtract
-from cv.utils.parsing_utils import get_single_image_from_command_line
+from cvp.utils.numpy_utils import safe_add, safe_subtract
+from cvp.utils.parsing_utils import get_single_image_from_command_line
 
 if __name__ == '__main__':
     image = get_single_image_from_command_line()

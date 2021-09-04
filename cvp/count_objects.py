@@ -3,7 +3,7 @@ import cv2.cv2 as cv2
 import imutils
 import sys
 
-from cv.utils.parsing_utils import get_single_image_from_command_line
+from cvp.utils.parsing_utils import get_single_image_from_command_line
 
 
 def main():
