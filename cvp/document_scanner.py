@@ -11,8 +11,7 @@ from skimage.filters import threshold_local
 import numpy as np
 
 
-def main():
-    image = get_single_image_from_command_line()
+def scan_document(image, color=False):
     show(image)
     edged = get_edged(image)
     show(edged, 'Edges')
@@ -31,13 +30,23 @@ def main():
 
     # apply the four point transform to obtain a top-down
     # view of the original image
-    warped = four_point_transform(image, screen_contour.reshape(4, 2))
-    # convert the warped image to grayscale, then threshold it
-    # to give it that 'black and white' paper effect
-    warped = cv.cvtColor(warped, cv.COLOR_BGR2GRAY)
-    thresh = threshold_local(warped, 11, offset=10, method="gaussian")
-    warped: np.ndarray = (warped > thresh)
-    warped = warped.astype("uint8") * 255
+    scanned_document = four_point_transform(image, screen_contour.reshape(4, 2))
+
+    if color:
+        return scanned_document
+    else:
+        # convert the warped image to grayscale, then threshold it
+        # to give it that 'black and white' paper effect
+        scanned_document = cv.cvtColor(scanned_document, cv.COLOR_BGR2GRAY)
+        thresh = threshold_local(scanned_document, 11, offset=10, method="gaussian")
+        scanned_document: np.ndarray = (scanned_document > thresh)
+        scanned_document = scanned_document.astype("uint8") * 255
+        return scanned_document
+
+
+def main():
+    image = get_single_image_from_command_line()
+    warped = scan_document(image)
     # show the original and scanned images
     show(warped, 'Scanned')
 
