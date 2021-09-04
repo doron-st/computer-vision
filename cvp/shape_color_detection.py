@@ -18,7 +18,7 @@ def main():
         # compute the center of the contour
         center = find_center(c)
         # detect the shape of the contour and label the color
-        shape = detect_shape(c)
+        shape, _ = detect_shape(c)
         color = color_labeler.label(lab_image, c)
         text = "{} {}".format(color, shape)
         cv.drawContours(image, [c], -1, (0, 255, 0), 2)

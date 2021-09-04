@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import cv2.cv2 as cv
 
 from cvp.utils.image_utils import show
@@ -19,9 +21,9 @@ def main():
         show(image)
 
 
-def detect_shape(contour) -> str:
+def detect_shape(contour, ratio=0.04) -> Tuple[str, list]:
     perimeter = cv.arcLength(contour, True)
-    approx_contour = cv.approxPolyDP(contour, 0.04 * perimeter, True)
+    approx_contour = cv.approxPolyDP(contour, ratio * perimeter, True)
 
     # if the shape is a triangle, it will have 3 vertices
     if len(approx_contour) == 3:
@@ -42,7 +44,7 @@ def detect_shape(contour) -> str:
     else:
         shape = "circle"
     # return the name of the shape
-    return shape
+    return shape, approx_contour
 
 
 if __name__ == '__main__':

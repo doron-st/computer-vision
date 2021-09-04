@@ -15,6 +15,13 @@ def get_contours(image, threshold: int, thresh_type=cv.THRESH_BINARY):
     return contours
 
 
+def get_edged(image):
+    gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    blurred = cv.GaussianBlur(gray, (7, 7), 0)
+    edged = cv.Canny(blurred, 75, 200)
+    return edged
+
+
 def get_contours_from_thresh(threshold_image):
     contours = cv.findContours(threshold_image.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     return imutils.grab_contours(contours)
