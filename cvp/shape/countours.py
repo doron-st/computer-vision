@@ -6,11 +6,15 @@ from cv2 import cv2 as cv
 from cvp.utils.image_utils import show
 
 
-def get_contours(image, threshold: int, thresh_type=cv.THRESH_BINARY):
-    gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+def get_contours(image, threshold: int, thresh_type=cv.THRESH_BINARY, is_color=True, do_show=False):
+    if is_color:
+        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    else:
+        gray = image
     blurred = cv.GaussianBlur(gray, (5, 5), 0)
     thresh_image = cv.threshold(blurred, threshold, 255, thresh_type)[1]
-    show(thresh_image)
+    if do_show:
+        show(thresh_image)
     contours = get_contours_from_thresh(thresh_image)
     return contours
 
