@@ -8,40 +8,28 @@ import time
 import cv2.cv2 as cv2
 import numpy as np
 
+from cvp.video.webcam_video_stream import WebcamVideoStream
+
 
 def main():
     # construct the argument parse and parse the arguments
     ap = argparse.ArgumentParser()
-    ap.add_argument("-o", "--output", required=True, help="path to output directory")
     ap.add_argument("-a", "--min-area", type=int, default=500, help="minimum area size")
-    ap.add_argument("-f", "--fps", type=int, default=20, help="FPS of output video")
-    ap.add_argument("-c", "--codec", type=str, default="MJPG", help="codec of output video")
-    ap.add_argument("-b", "--buffer-size", type=int, default=32,
-                    help="buffer size of video clip writer")
     args = vars(ap.parse_args())
 
     # initialize the video stream and allow the camera sensor to
     # warmup
     print("[INFO] warming up camera...")
-    vs = VideoStream(src=0).start()
+    vs = WebcamVideoStream().start()
     time.sleep(2.0)
     print("[INFO] done")
 
-    # define the lower and upper boundaries of the "green" ball in
-    # the HSV color space
-    greenLower = (29, 86, 6)
-    greenUpper = (64, 255, 255)
-    # initialize key clip writer and the consecutive number of
-    # frames that have *not* contained any action
-    # kcw = KeyClipWriter(buf_size=args["buffer_size"])
-    consecFrames = 0
-    firstFrame = None
+    first_frame = None
 
     # loop over the frames of the video
     while True:
-        # time.sleep(0.1)
-        # grab the current frame and initialize the occupied/unoccupied
-        # text
+
+        # grab the current frame and initialize the occupied/unoccupied text
         frame = vs.read()
         frame = frame if args.get("video", None) is None else frame[1]
         text = "Unoccupied"
@@ -54,13 +42,13 @@ def main():
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
         # if the first frame is None, initialize it
-        if firstFrame is None:
-            firstFrame = gray
+        if first_frame is None:
+            first_frame = gray
             continue
 
         # compute the absolute difference between the current frame and
         # first frame
-        frameDelta = cv2.absdiff(firstFrame, gray)
+        frameDelta = cv2.absdiff(first_frame, gray)
         cnts = get_contours(frameDelta, threshold=25, thresh_type=cv2.THRESH_BINARY, is_color=False)
         # loop over the contours
         for c in cnts:
