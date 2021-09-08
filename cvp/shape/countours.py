@@ -6,17 +6,21 @@ from cv2 import cv2 as cv
 from cvp.utils.image_utils import show
 
 
-def get_contours(image, threshold: int, thresh_type=cv.THRESH_BINARY, is_color=True, do_show=False):
+def get_contours(image, threshold: int, thresh_type=cv.THRESH_BINARY,
+                 is_color=True,
+                 sort_by=cv.contourArea,
+                 blur_kernel_size=5,
+                 do_show=False):
     if is_color:
         gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     else:
         gray = image
-    blurred = cv.GaussianBlur(gray, (5, 5), 0)
+    blurred = cv.GaussianBlur(gray, (blur_kernel_size, blur_kernel_size), 0)
     thresh_image = cv.threshold(blurred, threshold, 255, thresh_type)[1]
     if do_show:
         show(thresh_image)
-    contours = get_contours_from_thresh(thresh_image)
-    return contours
+    sorted_contours = get_contours_from_thresh(thresh_image, sort_by)
+    return sorted_contours
 
 
 def get_edged(image):
@@ -26,9 +30,11 @@ def get_edged(image):
     return edged
 
 
-def get_contours_from_thresh(threshold_image):
+def get_contours_from_thresh(threshold_image, sort_by=cv.contourArea):
     contours = cv.findContours(threshold_image.copy(), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-    return imutils.grab_contours(contours)
+    contours = imutils.grab_contours(contours)
+    sorted_contours = sorted(contours, key=sort_by, reverse=True)
+    return sorted_contours
 
 
 def find_center(contour) -> Optional[Tuple[int, int]]:

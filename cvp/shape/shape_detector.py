@@ -5,7 +5,7 @@ import cv2.cv2 as cv
 from cvp.utils.image_utils import show
 from cvp.shape.countours import get_contours, find_center
 from cvp.utils.parsing_utils import get_single_image_from_command_line
-
+import numpy as np
 
 def main():
     image = get_single_image_from_command_line()
@@ -21,7 +21,7 @@ def main():
         show(image)
 
 
-def detect_shape(contour, ratio=0.04) -> Tuple[str, list]:
+def detect_shape(contour, ratio=0.04) -> Tuple[str, np.array]:
     perimeter = cv.arcLength(contour, True)
     approx_contour = cv.approxPolyDP(contour, ratio * perimeter, True)
 
