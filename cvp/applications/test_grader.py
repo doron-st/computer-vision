@@ -2,7 +2,7 @@ import cv2.cv2 as cv2
 import numpy as np
 from imutils import contours
 
-from cvp.document_scanner import scan_document
+from cvp.applications.document_scanner import scan_document
 from cvp.shape.countours import get_contours
 from cvp.utils.image_utils import show
 from cvp.utils.parsing_utils import get_single_image_from_command_line
