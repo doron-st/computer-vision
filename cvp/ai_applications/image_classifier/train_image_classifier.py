@@ -7,13 +7,13 @@ import numpy as np
 import os
 import random
 from imutils import paths
+from tensorflow.keras.optimizers import SGD
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.optimizers import SGD
 
+from cvp.ai_applications.image_classifier.fully_connected_net import FullyConnectedNet
+from cvp.ai_applications.image_classifier.small_vgg_net import SmallVGGNet
 from cvp.utils.io_utils import write_pickle
 
 matplotlib.use("Agg")
@@ -21,7 +21,9 @@ matplotlib.use("Agg")
 
 # initialize our initial learning rate and # of epochs to train for
 INIT_LR = 0.01
-EPOCHS = 30
+EPOCHS = 50
+MODEL_NAME = 'small_vgg'
+# MODEL_NAME = 'fully_connected'
 
 
 def parse_args():
@@ -55,7 +57,10 @@ def load_data(dataset):
         # aspect ratio), flatten the image into 32x32x3=3072 pixel image
         # into a list, and store the image in the data list
         image = cv2.imread(image_path)
-        image = cv2.resize(image, (32, 32)).flatten()
+        if MODEL_NAME == 'fully_connected':
+            image = cv2.resize(image, (32, 32)).flatten()
+        else:
+            image = cv2.resize(image, (64, 64))
         data.append(image)
         # extract the class label from the image path and update the
         # labels list
@@ -67,21 +72,6 @@ def load_data(dataset):
     labels = np.array(labels)
 
     return data, labels
-
-
-def define_nn(num_of_labels):
-    # define the 3072-1024-512-|labels| architecture using Keras
-    model = Sequential()
-    model.add(Dense(1024, input_shape=(3072,), activation="sigmoid"))
-    model.add(Dense(512, activation="sigmoid"))
-    model.add(Dense(num_of_labels, activation="softmax"))
-
-    # compile the model using SGD as our optimizer and categorical
-    # cross-entropy loss (you'll want to use binary_crossentropy
-    # for 2-class classification)
-    opt = SGD(lr=INIT_LR)
-    model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
-    return model
 
 
 def plot_eval(H, output_file):
@@ -114,7 +104,15 @@ def main():
     test_y = lb.transform(test_y)
     num_of_categories = len(lb.classes_)
 
-    model = define_nn(num_of_categories)
+    if MODEL_NAME == 'fully_connected':
+        model = FullyConnectedNet.build(num_of_categories)
+    elif MODEL_NAME == 'small_vgg':
+        model = SmallVGGNet.build(64, 64, 3, num_of_categories)
+    else:
+        raise RuntimeError('undefined MODEL_NAME (fully_connected | small_vgg)')
+
+    opt = SGD(learning_rate=INIT_LR)
+    model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
 
     print("[INFO] training network...")
     h = model.fit(x=train_x, y=train_y, validation_data=(test_x, test_y), epochs=EPOCHS, batch_size=32)
