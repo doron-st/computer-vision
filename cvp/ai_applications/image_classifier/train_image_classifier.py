@@ -7,6 +7,7 @@ import numpy as np
 import os
 import random
 from imutils import paths
+from keras_preprocessing.image import ImageDataGenerator
 from tensorflow.keras.optimizers import SGD
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
@@ -21,9 +22,10 @@ matplotlib.use("Agg")
 
 # initialize our initial learning rate and # of epochs to train for
 INIT_LR = 0.01
-EPOCHS = 50
+EPOCHS = 75
 MODEL_NAME = 'small_vgg'
 # MODEL_NAME = 'fully_connected'
+BATCH_SIZE = 32
 
 
 def parse_args():
@@ -111,11 +113,19 @@ def main():
     else:
         raise RuntimeError('undefined MODEL_NAME (fully_connected | small_vgg)')
 
-    opt = SGD(learning_rate=INIT_LR)
+    opt = SGD(learning_rate=INIT_LR, decay=INIT_LR / EPOCHS)
     model.compile(loss="categorical_crossentropy", optimizer=opt, metrics=["accuracy"])
 
+    # construct the image generator for data augmentation
+    aug = ImageDataGenerator(rotation_range=30, width_shift_range=0.1,
+                             height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
+                             horizontal_flip=True, fill_mode="nearest")
+
     print("[INFO] training network...")
-    h = model.fit(x=train_x, y=train_y, validation_data=(test_x, test_y), epochs=EPOCHS, batch_size=32)
+    h = model.fit(x=aug.flow(train_x, train_y, batch_size=BATCH_SIZE),
+                  validation_data=(test_x, test_y),
+                  steps_per_epoch=len(train_x) // BATCH_SIZE,
+                  epochs=EPOCHS)
 
     # evaluate the network
     print("[INFO] evaluating network...")

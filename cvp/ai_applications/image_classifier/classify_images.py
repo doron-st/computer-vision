@@ -15,9 +15,9 @@ def parse_args():
                     help="path to trained Keras model")
     ap.add_argument("-l", "--label_bin", required=True,
                     help="path to label binarizer")
-    ap.add_argument("-w", "--width", type=int, default=32,
+    ap.add_argument("-w", "--width", type=int, default=64,
                     help="target spatial dimension width")
-    ap.add_argument("-e", "--height", type=int, default=32,
+    ap.add_argument("-e", "--height", type=int, default=64,
                     help="target spatial dimension height")
     ap.add_argument("-f", "--flatten", type=int, default=-1,
                     help="whether or not we should flatten the image")
